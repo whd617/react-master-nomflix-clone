@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 import {
   Link,
   Route,
@@ -30,7 +31,7 @@ const Container = styled.div`
 `;
 
 const Header = styled.header`
-  height: 15vh;
+  height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,6 +56,7 @@ const OverviewItem = styled.div`
     margin-bottom: 5px;
   }
 `;
+
 const Description = styled.p`
   margin: 20px 0px;
 `;
@@ -79,6 +81,14 @@ const Tab = styled.span<{ isActive: boolean }>`
   a {
     display: block;
   }
+`;
+
+const Directhome = styled.span`
+  display: block;
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 25px;
+  color: ${(props) => props.theme.textColor};
 `;
 
 interface RouteParams {
@@ -156,15 +166,28 @@ function Coin() {
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ['tickers', coinId],
     () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 100000,
+    },
   );
 
   const loading = infoLoading || tickersLoading;
 
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? 'Loading...' : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
-        <Title>{state?.name || 'Loading'}</Title>
+        <Title>
+          {state?.name ? state.name : loading ? 'Loading...' : infoData?.name}
+        </Title>
       </Header>
+      <Link to='/'>
+        <Directhome>Home</Directhome>
+      </Link>
       {loading ? (
         <Loader>Loading...</Loader>
       ) : (
@@ -179,8 +202,8 @@ function Coin() {
               <span>${infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <span>{infoData?.open_source ? 'Yes' : 'No'}</span>
+              <span>Price:</span>
+              <span>{tickersData?.quotes.USD.price}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -206,7 +229,7 @@ function Coin() {
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/:coinId/chart`}>
               <Chart coinId={coinId} />
