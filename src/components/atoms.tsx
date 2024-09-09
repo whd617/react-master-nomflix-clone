@@ -1,9 +1,9 @@
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 
 export interface IToDo {
   text: string;
   id: number;
-  categroy: 'TO_DO' | 'DOING' | 'DONE';
+  category: 'TO_DO' | 'DOING' | 'DONE';
 }
 
 export const toDoState = atom<IToDo[]>({
