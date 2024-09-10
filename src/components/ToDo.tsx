@@ -13,11 +13,18 @@ function ToDo({ text, category, id }: IToDo) {
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
       const newToDo = { text, id, category: name as any };
-      return [
+
+      // 로컬 스토리지에 저장합니다.
+
+      const updateToDo = [
         ...oldToDos.slice(0, targetIndex),
         newToDo,
         ...oldToDos.slice(targetIndex + 1),
       ];
+
+      localStorage.setItem('toDos', JSON.stringify(updateToDo));
+
+      return updateToDo;
     });
   };
 
