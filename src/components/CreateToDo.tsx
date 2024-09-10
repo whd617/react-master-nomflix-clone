@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
-import { toDoState } from './atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { categoryState, toDoState } from './atoms';
 
 interface IForm {
   toDo: string;
@@ -8,12 +8,22 @@ interface IForm {
 
 function CreateToDo() {
   const setToDos = useSetRecoilState(toDoState);
+  const category = useRecoilValue(categoryState);
   const { register, handleSubmit, setValue } = useForm<IForm>();
+
   const onSubmit = ({ toDo }: IForm) => {
-    setToDos((oldToDos) => [
-      { text: toDo, id: Date.now(), category: 'TO_DO' },
-      ...oldToDos,
-    ]);
+    setToDos((oldToDos) => {
+      const updatedToDos = [
+        { text: toDo, id: Date.now(), category },
+        ...oldToDos,
+      ];
+
+      // localStorage에 저장
+      localStorage.setItem('toDos', JSON.stringify(updatedToDos));
+
+      return updatedToDos;
+    });
+
     setValue('toDo', '');
   };
   return (
