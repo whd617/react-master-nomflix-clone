@@ -18,7 +18,7 @@ function DraggableCard({ toDo, index }: IDraggableCardProps) {
   console.log(toDo, 'has been rendered');
   return (
     <Draggable key={toDo} draggableId={toDo} index={index}>
-      {(magic) => (
+      {(magic, snapshot) => (
         <Card
           ref={magic.innerRef}
           {...magic.dragHandleProps}

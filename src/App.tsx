@@ -27,7 +27,8 @@ function App() {
   const onDragEnd = (info: DropResult) => {
     console.log(info);
     const { destination, draggableId, source } = info;
-    if (destination?.droppableId === source.droppableId) {
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId) {
       // same board movement
       setToDos((oldToDos) => {
         // source의 droppableId로 부터 array를 복사하는 과정이야.
@@ -39,6 +40,22 @@ function App() {
         return {
           ...oldToDos,
           [source.droppableId]: boardCopy,
+        };
+      });
+    }
+    if (destination.droppableId !== source.droppableId) {
+      // cross board movement
+      setToDos((allBoards) => {
+        // 이동이 시작된 지점의 board Id를 알 수 있다.
+        const sourceBoard = [...allBoards[source.droppableId]];
+        // destinaton.droppableId는 움직임이 끝나느 board의 ID를 준다.
+        const destinationBoard = [...allBoards[destination.droppableId]];
+        sourceBoard.splice(source.index, 1);
+        destinationBoard.splice(destination.index, 0, draggableId);
+        return {
+          ...allBoards,
+          [source.droppableId]: sourceBoard,
+          [destination.droppableId]: destinationBoard,
         };
       });
     }
