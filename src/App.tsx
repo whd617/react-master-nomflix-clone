@@ -1,54 +1,79 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { motion, Variants } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const BiggerBox = styled.div`
-  width: 600px;
-  height: 600px;
-  background-color: rgba(255, 255, 255, 0.4);
-  border-radius: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
 `;
 
 const Box = styled(motion.div)`
-  width: 200px;
+  width: 400px;
   height: 200px;
   background-color: rgba(255, 255, 255, 1);
   border-radius: 40px;
+  display: flex;
+  top: 50px;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const boxVariants: Variants = {
-  hover: { rotateZ: 90 },
-  click: { borderRadius: '100px' },
+const box: Variants = {
+  entry: (back: boolean) => {
+    return { x: back ? -500 : 500, opacity: 0, scale: 0 };
+  },
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  exit: (back: boolean) => ({
+    x: back ? 500 : -500,
+    opacity: 0,
+    rotateX: 180,
+    transition: {
+      duration: 0.3,
+    },
+  }),
 };
 
 function App() {
-  const biggerBoxRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(1);
+  const [back, setBack] = useState(false);
+  const nextPlease = () => {
+    setBack(false);
+    setVisible((prev) => (prev === 10 ? 10 : prev + 1));
+  };
+  const prevPlease = () => {
+    setBack(true);
+    setVisible((prev) => (prev === 1 ? 1 : prev - 1));
+  };
   return (
     <Wrapper>
-      <BiggerBox ref={biggerBoxRef}>
+      <AnimatePresence custom={back}>
         <Box
-          drag
-          dragSnapToOrigin
-          dragConstraints={biggerBoxRef}
-          dragElastic={0.5}
-          variants={boxVariants}
-          whileHover='hover'
-          whileDrag='drag'
-          whileTap='click'
-        />
-      </BiggerBox>
+          custom={back}
+          variants={box}
+          initial='entry'
+          animate='center'
+          exit='exit'
+          key={visible}
+        >
+          {visible}
+        </Box>
+      </AnimatePresence>
+      <button onClick={nextPlease}>next</button>
+      <button onClick={prevPlease}>prev</button>
     </Wrapper>
   );
 }
