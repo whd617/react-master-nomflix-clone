@@ -4,7 +4,7 @@ import App from './App';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
-import { darkTheme } from './theme';
+import { theme } from './theme';
 
 import { createGlobalStyle } from 'styled-components';
 
@@ -63,7 +63,6 @@ table {
 body {
   font-weight: 300;
   font-family: 'Source Sans Pro', sans-serif;
-  background:linear-gradient(135deg,#e09,#d0e);
   color:black;
   line-height: 1.2;
 }
@@ -82,7 +81,7 @@ const queryClient = new QueryClient();
 root.render(
   <>
     <RecoilRoot>
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <GlobalStyle />
           <App />
